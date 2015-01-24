@@ -23,14 +23,8 @@ var processTweets = function(filepath) {
     while ((pos = buf.indexOf('\n')) >= 0) { // keep going while there's a newline somewhere in the buffer
       process(buf.slice(0,pos)); // hand off the line
       buf = buf.slice(pos+1); // and slice the processed data off the buffer
-      // setTimeout(loop(pos), 1000);
     }
   }
-
-  // function loop(pos) {
-  //   process(buf.slice(0,pos)); // hand off the line
-  //   buf = buf.slice(pos+1); // and slice the processed data off the buffer
-  // }
 
   function process(line) { // here's where we do something with a line
     if (line.length > 0) { // ignore empty lines
@@ -45,23 +39,25 @@ var processTweets = function(filepath) {
     } catch (e) {
       return false;
     }
-    if (obj.geo != null && latIsFine(obj.geo.coordinates[0]) && longIsFine(obj.geo.coordinates[1])){
-        var tweet = new Tweet;
-          tweet.created_at = obj.created_at;
-          tweet.user_id = obj.id;
-          tweet.tweet_id = obj.id_str;
-          tweet.text = obj.text; 
-          tweet.longitude = obj.geo.coordinates[1];
-          tweet.latitude = obj.geo.coordinates[0];
-        tweet.save(function(err){
-          if(err)
-            return false
-          return true;
-        });
-    } else{
+    if (obj.coordinates != null && latIsFine(obj.coordinates.coordinates[1]) && longIsFine(obj.coordinates.coordinates[0])) {
+      var tweet = new Tweet;
+        tweet._id = obj.id_str;
+        tweet.createdAt = obj.created_at;
+        tweet.content = obj.text; 
+        tweet.longitude = obj.coordinates.coordinates[0];
+        tweet.latitude = obj.coordinates.coordinates[1];
+        tweet.userId = obj.user.id_str;
+        tweet.username = obj.user.screen_name;
+
+      tweet.save(function(err){
+        if (err)
+          return false;
+        return true;
+      });
+    } else {
       return true;
     }
-  }
+  };
 
   function latIsFine (latitude){
     return latitude >= 51.2415153 && latitude <= 51.7419679
@@ -74,7 +70,7 @@ var processTweets = function(filepath) {
 
 app.get('/', function(req, res) {
 
-  processTweets("./tweetslarge.txt");
+  processTweets("./tweets.txt");
 
 });
 
