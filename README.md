@@ -1,5 +1,7 @@
 #MongoDB Tweet Utility Server
 
+[![Code Climate](https://codeclimate.com/github/nickbdyer/tweetstomongo/badges/gpa.svg)](https://codeclimate.com/github/nickbdyer/tweetstomongo)
+
 This server was created in order to have a simple method of writing tweets from
 a text file to a Mongo Database. In doing so we were able to benchmark the
 reading process from Mongo compared to creating a readStream from a text file. 
